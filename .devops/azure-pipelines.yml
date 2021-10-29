@@ -1,8 +1,5 @@
 name: $(majorMinorVersion).$(semanticVersion) # $(rev:r) # NOTE: rev resets when the default retention period expires
 
-pool: 
-  vmImage: 'vs2017-win2016' 
-
 # pipeline variables
 variables:
   majorMinorVersion: 1.0
@@ -11,6 +8,7 @@ variables:
   semanticVersion: $[counter(variables['majorMinorVersion'], 0)]
   projectName: 'ShiftDigital.Dapr.Client.Extensions'
   buildConfiguration: 'Release'
+  vmImageName: ubuntu-latest
 
 trigger:
 - main
