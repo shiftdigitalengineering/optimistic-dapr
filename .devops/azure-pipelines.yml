@@ -9,6 +9,7 @@ variables:
   projectName: 'ShiftDigital.Dapr.Client.Extensions'
   buildConfiguration: 'Release'
   vmImageName: ubuntu-latest
+  packageName: OptimisticDapr
 
 trigger:
 - main
@@ -37,3 +38,12 @@ stages:
         packagesToPack: '**/$(ProjectName)/*.csproj'
         packDirectory: '$(build.artifactStagingDirectory)'
         versioningScheme: byBuildNumber # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=azure-devops#yaml-snippet
+    - task: NuGetAuthenticate@0
+# Publish
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish'
+      inputs:
+        command: 'push'
+        nuGetFeedType: 'external'
+        packagesToPush: '$(build.artifactStagingDirectory)/$(packageName)*.nupkg'
+        publishVstsFeed: 'MyPackageFeedName'
