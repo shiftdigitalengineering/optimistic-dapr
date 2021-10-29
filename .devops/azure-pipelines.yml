@@ -39,6 +39,8 @@ stages:
         packDirectory: '$(build.artifactStagingDirectory)'
         versioningScheme: byBuildNumber # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=azure-devops#yaml-snippet
     - task: NuGetAuthenticate@0
+      inputs:
+        nuGetServiceConnections: 'shiftdigitalengineering-nuget.org'
 # Publish
     - task: DotNetCoreCLI@2
       displayName: 'Publish'
@@ -46,4 +48,4 @@ stages:
         command: 'push'
         nuGetFeedType: 'external'
         packagesToPush: '$(build.artifactStagingDirectory)/$(packageName)*.nupkg'
-        publishVstsFeed: 'MyPackageFeedName'
+        publishVstsFeed: 'https://api.nuget.org/v3/index.json'
