@@ -1,0 +1,32 @@
+trigger:
+- main
+
+resources:
+- repo: self
+
+variables:
+- name: vmImageName
+  value: 'ubuntu-latest'
+- name: Major
+  value: '1'
+- name: Minor
+  value: '0'
+- name: Patch
+  value: '0'
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        command: build
+        projects: |
+          src/ShiftDigital.Dapr.Client.Extensions/*.csproj
+        
