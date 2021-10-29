@@ -1,18 +1,19 @@
+name: $(majorMinorVersion).$(semanticVersion) # $(rev:r) # NOTE: rev resets when the default retention period expires
+
+pool: 
+  vmImage: 'vs2017-win2016' 
+
+# pipeline variables
+variables:
+  majorMinorVersion: 1.0
+  # semanticVersion counter is automatically incremented by one in each execution of pipeline
+  # second parameter is seed value to reset to every time the referenced majorMinorVersion is changed
+  semanticVersion: $[counter(variables['majorMinorVersion'], 0)]
+  projectName: 'ShiftDigital.Dapr.Client.Extensions'
+  buildConfiguration: 'Release'
+
 trigger:
 - main
-
-resources:
-- repo: self
-
-variables:
-- name: vmImageName
-  value: 'ubuntu-latest'
-- name: Major
-  value: '1'
-- name: Minor
-  value: '0'
-- name: Patch
-  value: '0'
 
 stages:
 - stage: Build
@@ -23,13 +24,18 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+# Build
     - task: DotNetCoreCLI@2
-      displayName: Build & Pack
+      displayName: Build
       inputs:
-        command: pack
-        projects: |
-          src/ShiftDigital.Dapr.Client.Extensions/*.csproj
-        versioningScheme: byPrereleaseNumber
-        majorVersion: '$(Major)'
-        minorVersion: '$(Minor)'
-        patchVersion: '$(Patch)'
+        projects: '**/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+# Package
+    - task: DotNetCoreCLI@2
+      displayName: 'NuGet pack'
+      inputs:
+        command: 'pack'
+        configuration: $(BuildConfiguration)
+        packagesToPack: '**/$(ProjectName)/*.csproj'
+        packDirectory: '$(build.artifactStagingDirectory)'
+        versioningScheme: byBuildNumber # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=azure-devops#yaml-snippet
