@@ -38,12 +38,9 @@ stages:
         packagesToPack: '**/$(ProjectName)/*.csproj'
         packDirectory: '$(build.artifactStagingDirectory)'
         versioningScheme: byBuildNumber # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=azure-devops#yaml-snippet    
-# Publish
-    - task: DotNetCoreCLI@2
-      displayName: 'Publish'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Artifact Publish'
       inputs:
-        command: 'push'
-        nuGetFeedType: 'external'
-        packagesToPush: '$(build.artifactStagingDirectory)/$(packageName)*.nupkg'
-        publishVstsFeed: 'https://api.nuget.org/v3/index.json'
-        arguments: '--api-key #ca610a89fcda4e589566bce077484cbf#'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
