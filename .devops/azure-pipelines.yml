@@ -24,9 +24,12 @@ stages:
       vmImage: $(vmImageName)
     steps:
     - task: DotNetCoreCLI@2
-      displayName: Build
+      displayName: Build & Pack
       inputs:
-        command: build
+        command: pack
         projects: |
           src/ShiftDigital.Dapr.Client.Extensions/*.csproj
-        
+        versioningScheme: byPrereleaseNumber
+        majorVersion: '$(Major)'
+        minorVersion: '$(Minor)'
+        patchVersion: '$(Patch)'
